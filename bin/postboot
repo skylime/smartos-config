@@ -1,0 +1,25 @@
+#!/bin/ksh
+
+## Disable DAD for Solaris
+## http://wiki.hetzner.de/index.php/Solaris_DAD 
+# IPv4
+/sbin/ipadm set-prop  -p _arp_probe_count=0 ip
+/sbin/ipadm set-prop  -p _arp_fastprobe_count=0 ip
+/sbin/ipadm set-prop  -p _arp_defend_interval=0 ip
+# IPv6
+/sbin/ipadm set-prop  -p _dad_announce_interval=0 ipv4
+/sbin/ipadm set-prop  -p _dad_announce_interval=0 ipv6
+/sbin/ipadm set-prop  -p _ndp_defend_interval=0 ip
+/sbin/ipadm set-prop  -p _ndp_defend_rate=0 ip
+# Result
+/sbin/ipadm show-prop -p _arp_probe_count ip
+
+## Symlink some config files to the root user
+# inputrc for back and forward keys
+/bin/ln -nsf /opt/custom/profile/inputrc /root/.inputrc
+# vimrc for better vim support
+/bin/ln -nsf /opt/custom/profile/vimrc /root/.vimrc
+
+## Network
+# Setup virtual network
+/opt/custom/bin/network

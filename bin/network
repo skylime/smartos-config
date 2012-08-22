@@ -1,0 +1,19 @@
+#!/bin/ksh
+
+## Global zone setup
+# create virtual network device in switch0
+dladm create-vnic -l switch0 vnic0
+# assign to global zone
+ifconfig vnic0 plumb
+# setup ip and network
+ifconfig vnic0 inet 192.168.200.1 up
+# enable ipv4 forwarding
+routeadm -u -e ipv4-forwarding
+# setup nat rules
+cp /opt/custom/conf/ipf.conf /etc/ipf/ipf.conf
+cp /opt/custom/conf/ipnat.conf /etc/ipf/ipnat.conf
+# enable ipfilter
+svcadm enable network/ipfilter
+# reload
+#ipf -Fa -f /etc/ipf/ipf.conf
+#ipnat -C -f /etc/ipf/ipnat.conf
