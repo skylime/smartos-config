@@ -20,6 +20,10 @@
 # vimrc for better vim support
 /bin/ln -nsf /opt/custom/profile/vimrc /root/.vimrc
 
+## Copy svc methods
+# openvpn start script
+cp /opt/custom/bin/openvpn /lib/svc/method/openvpn
+
 ## Network
 # Setup virtual network
 /opt/custom/bin/network
