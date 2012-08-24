@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-## Global zone setup
+## Global zone setup - nat and virtual setup
 # create virtual network device in switch0
 dladm create-vnic -l switch0 vnic0
 # assign to global zone
@@ -21,3 +21,8 @@ svcadm enable network/ipfilter
 # reload
 #ipf -Fa -f /etc/ipf/ipf.conf
 #ipnat -C -f /etc/ipf/ipnat.conf
+
+## Global zone setup - additional ip
+#dladm create-vnic -l rge0 backup0
+#ifconfig backup0 plumb
+#ifconfig backup0 inet 176.9.28.121 netmask 255.255.255.224 up
