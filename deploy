@@ -3,6 +3,6 @@
 folder=${1}
 host=${2}
 
-ssh root@${host} "rm -rf /opt/custom/"
-ssh root@${host} "mkdir /opt/custom/"
-scp -r ${folder}/* root@${host}:/opt/custom/
+ssh -4 root@${host} "rm -rf /opt/custom/"
+ssh -4 root@${host} "mkdir /opt/custom/"
+scp -4 -r ${folder}/* root@${host}:/opt/custom/
