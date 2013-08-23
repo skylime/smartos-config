@@ -1,0 +1,6 @@
+#!/bin/bash
+
+host=${1}
+
+ssh root@${host} "mkdir /opt/custom/"
+scp -r de-muc-ipx/* root@${host}:/opt/custom/
