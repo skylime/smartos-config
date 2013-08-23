@@ -7,5 +7,5 @@ http://www.unece.org/cefact/codesfortrade/codes_index.html
 
 Simple `scp` the content of one folder to `/opt/custom/`. For example:
 
-	./deploy [hostname]
-	./deploy bubbles.srv.skylime.net
+	./deploy [folder] [hostname]
+	./deploy de-muc-ipx bubbles.srv.skylime.net
