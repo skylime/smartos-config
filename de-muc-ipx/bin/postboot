@@ -1,5 +1,10 @@
 #!/bin/ksh
 
+## Disable IPv6 autoconfiguration
+echo "ifdefault StatelessAddrConf false
+ifdefault TmpAddrsEnabled false" > /etc/inet/ndpd.conf
+pkill -HUP in.ndpd
+
 ## Symlink some config files to the root user
 # inputrc for back and forward keys
 /bin/ln -nsf /opt/custom/profile/inputrc /root/.inputrc
