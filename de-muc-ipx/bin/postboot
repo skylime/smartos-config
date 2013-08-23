@@ -5,7 +5,3 @@
 /bin/ln -nsf /opt/custom/profile/inputrc /root/.inputrc
 # vimrc for better vim support
 /bin/ln -nsf /opt/custom/profile/vimrc /root/.vimrc
-
-## Network
-# Setup virtual network
-/opt/custom/bin/network

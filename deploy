@@ -3,5 +3,6 @@
 folder=${1}
 host=${2}
 
+ssh root@${host} "rm -rf /opt/custom/"
 ssh root@${host} "mkdir /opt/custom/"
 scp -r ${folder}/* root@${host}:/opt/custom/
