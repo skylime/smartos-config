@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. /lib/svc/share/smf_include.sh
+. /lib/sdc/config.sh
+
+load_sdc_sysinfo
+load_sdc_config
+
+## Global zone setup - ipv6 autoconfig
+ifconfig ${SYSINFO_NIC_admin} inet6 plumb up
+svcadm enable ndp
+
+exit ${SMF_EXIT_OK}
