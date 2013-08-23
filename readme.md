@@ -1,4 +1,4 @@
-# My SmartOS configuration (only for the global zone)
+# My SmartOS configuration (global zone)
 
 Location codes could be found on
 http://www.unece.org/cefact/codesfortrade/codes_index.html
