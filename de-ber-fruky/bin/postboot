@@ -26,7 +26,7 @@ fi
 ## Sendmail configuration for SmartHost setup
 if [[ ${CONFIG_mail_smarthost} ]]; then
 	cp /etc/mail/submit.cf /tmp/
-	sed "s:^DS:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf > /etc/mail/submit.cf
+	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf > /etc/mail/submit.cf
 	svcadm refresh sendmail
 fi
 if [[ ${CONFIG_mail_auth_user} ]]; then
