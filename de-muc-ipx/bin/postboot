@@ -1,7 +1,46 @@
-#!/bin/ksh
+#!/usr/bin/bash
+
+## Load configuration information from USBKey
+. /lib/svc/share/smf_include.sh
+. /lib/sdc/config.sh
+
+load_sdc_sysinfo
+load_sdc_config
+
+## Set the PATH environment because of other commands in /usr
+PATH=/usr/bin:/usr/sbin:${PATH}
 
 ## Symlink some config files to the root user
-# inputrc for back and forward keys
-/bin/ln -nsf /opt/custom/profile/inputrc /root/.inputrc
-# vimrc for better vim support
-/bin/ln -nsf /opt/custom/profile/vimrc /root/.vimrc
+for fullpath in /opt/custom/profile/*; do
+	filename=${fullpath##*/}
+	ln -nsf "${file}" "/root/.${filename}"
+done
+
+## Setup fully qualified domain name
+if [[ ${CONFIG_dns_domain} ]]; then
+	hostname=$(hostname)
+	echo "${CONFIG_admin_ip}\t${hostname} ${hostname}.${CONFIG_dns_domain}" \
+		>> /etc/hosts
+fi
+
+## Sendmail configuration for SmartHost setup
+if [[ ${CONFIG_mail_smarthost} ]]; then
+	cp /etc/mail/submit.cf /tmp/
+	sed "s:^DS:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf > /etc/mail/submit.cf
+	svcadm refresh sendmail
+fi
+if [[ ${CONFIG_mail_auth_user} ]]; then
+	echo 'AuthInfo:'${CONFIG_mail_smarthost}'
+		"U:'${CONFIG_mail_auth_user}'"
+		"I:'${CONFIG_mail_auth_user}'"
+		"P:'${CONFIG_mail_auth_pass}'"' \
+		> /etc/mail/default-auth-info
+fi
+
+## Redirect all root emails to admin address
+if [[ ${CONFIG_mail_adminaddr} ]]; then
+	echo "root: ${CONFIG_mail_adminaddr}" >> /etc/mail/aliases
+	newaliases
+fi
+
+exit $SMF_EXIT_OK
