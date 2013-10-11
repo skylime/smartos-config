@@ -59,8 +59,6 @@ if [[ ${CONFIG_mail_adminaddr} ]]; then
 fi
 
 ## Setup crontabs only for root user
-for crontab in /opt/custom/crontabs/*; do
-	crontab ${crontab}
-done
+cat /opt/custom/crontabs/* | crontab
 
 exit $SMF_EXIT_OK
