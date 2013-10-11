@@ -32,11 +32,23 @@ fi
 if [[ ${CONFIG_mail_smarthost} ]]; then
 	cp /etc/mail/submit.cf /tmp/
 	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf > /etc/mail/submit.cf
+	svcadm refresh sendmail-client
 	svcadm refresh sendmail
 fi
 if [[ ${CONFIG_mail_auth_user} ]]; then
 	echo 'AuthInfo:'${CONFIG_mail_smarthost}' "U:'${CONFIG_mail_auth_user}'" "I:'${CONFIG_mail_auth_user}'" "P:'${CONFIG_mail_auth_pass}'"' \
 		> /etc/mail/default-auth-info
+	echo -e 'Kauthinfo hash /etc/mail/default-auth-info
+O AuthMechanisms=EXTERNAL GSSAPI DIGEST-MD5 CRAM-MD5 LOGIN PLAIN
+Sauthinfo
+R$*\t\t\t$: <$(authinfo AuthInfo:$&{server_name} $: ? $)>
+R<?>\t\t$: <$(authinfo AuthInfo:$&{server_addr} $: ? $)>
+R<?>\t\t$: <$(authinfo AuthInfo: $: ? $)>
+R<?>\t\t$@ no               no authinfo available
+R<$*>\t\t$# $1' \
+	>> /etc/mail/submit.cf
+	makemap hash /etc/mail/default-auth-info < /etc/mail/default-auth-info
+	chgrp smmsp /etc/mail/default-auth-info.db
 fi
 
 ## Redirect all root emails to admin address
