@@ -1,29 +1,66 @@
-#!/bin/ksh
+#!/usr/bin/bash
 
-## Disable DAD for Solaris
-## http://wiki.hetzner.de/index.php/Solaris_DAD 
-# IPv4
-/sbin/ipadm set-prop  -p _arp_probe_count=0 ip
-/sbin/ipadm set-prop  -p _arp_fastprobe_count=0 ip
-/sbin/ipadm set-prop  -p _arp_defend_interval=0 ip
-# IPv6
-/sbin/ipadm set-prop  -p _dad_announce_interval=0 ipv4
-/sbin/ipadm set-prop  -p _dad_announce_interval=0 ipv6
-/sbin/ipadm set-prop  -p _ndp_defend_interval=0 ip
-/sbin/ipadm set-prop  -p _ndp_defend_rate=0 ip
-# Result
-/sbin/ipadm show-prop -p _arp_probe_count ip
+## Load configuration information from USBKey
+. /lib/svc/share/smf_include.sh
+. /lib/sdc/config.sh
+
+load_sdc_sysinfo
+load_sdc_config
+
+## Set the PATH environment because of other commands in /usr
+PATH=/usr/bin:/usr/sbin:${PATH}
 
 ## Symlink some config files to the root user
-# inputrc for back and forward keys
-/bin/ln -nsf /opt/custom/profile/inputrc /root/.inputrc
-# vimrc for better vim support
-/bin/ln -nsf /opt/custom/profile/vimrc /root/.vimrc
+for fullpath in /opt/custom/profile/*; do
+	filename=${fullpath##*/}
+	ln -nsf "${fullpath}" "/root/.${filename}"
+done
 
-## Copy svc methods
-# openvpn start script
-cp /opt/custom/bin/openvpn /lib/svc/method/openvpn
+## Setup fully qualified domain name
+if [[ ${CONFIG_dns_domain} ]]; then
+	hostname=${CONFIG_admin_nic//:/-}
+	if [[ "${CONFIG_admin_ip}" == "dhcp" ]]; then
+		ip=$(ipadm show-addr -p -o TYPE,ADDR | grep dhcp | sed 's:dhcp\:\(.*\)/.*:\1:g')
+	else
+		ip=${CONFIG_admin_ip}
+	fi
+	echo -e "${ip}\t${hostname} ${hostname}.${CONFIG_dns_domain}" \
+		>> /etc/hosts
+fi
 
-## Network
-# Setup virtual network
-/opt/custom/bin/network
+## Sendmail configuration for SmartHost setup
+if [[ ${CONFIG_mail_smarthost} ]]; then
+	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
+	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf > /etc/mail/submit.cf
+	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
+	svcadm refresh sendmail-client
+	svcadm refresh sendmail
+fi
+if [[ ${CONFIG_mail_auth_user} ]]; then
+	echo 'AuthInfo:'${CONFIG_mail_smarthost}' "U:'${CONFIG_mail_auth_user}'" "I:'${CONFIG_mail_auth_user}'" "P:'${CONFIG_mail_auth_pass}'"' \
+		> /etc/mail/default-auth-info
+	echo -e 'Kauthinfo hash /etc/mail/default-auth-info
+O AuthMechanisms=EXTERNAL GSSAPI DIGEST-MD5 CRAM-MD5 LOGIN PLAIN
+Sauthinfo
+R$*\t\t\t$: <$(authinfo AuthInfo:$&{server_name} $: ? $)>
+R<?>\t\t$: <$(authinfo AuthInfo:$&{server_addr} $: ? $)>
+R<?>\t\t$: <$(authinfo AuthInfo: $: ? $)>
+R<?>\t\t$@ no               no authinfo available
+R<$*>\t\t$# $1' \
+	| tee -a /etc/mail/sendmail.cf >> /etc/mail/submit.cf
+	makemap hash /etc/mail/default-auth-info < /etc/mail/default-auth-info
+	chgrp smmsp /etc/mail/default-auth-info.db
+fi
+
+## Redirect all root emails to admin address
+if [[ ${CONFIG_mail_adminaddr} ]]; then
+	echo "root: ${CONFIG_mail_adminaddr}" >> /etc/mail/aliases
+	newaliases
+fi
+
+## Setup crontabs only for root user
+for crontab in /opt/custom/crontabs/*; do
+	crontab ${crontab}
+done
+
+exit $SMF_EXIT_OK

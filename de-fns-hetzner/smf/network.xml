@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
-<service_bundle type='manifest' name='site:postboot'>
+<service_bundle type='manifest' name='site:network'>
 <service
-        name='site/postboot'
+        name='site/network'
         type='service'
         version='1'>
 
@@ -25,7 +25,7 @@
         <exec_method
                 type='method'
                 name='start'
-                exec='/opt/custom/bin/postboot'
+                exec='/opt/custom/bin/network'
                 timeout_seconds='0'>
         </exec_method>
         <exec_method
