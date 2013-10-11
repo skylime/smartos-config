@@ -19,7 +19,7 @@ done
 ## Setup fully qualified domain name
 if [[ ${CONFIG_dns_domain} ]]; then
 	hostname=${CONFIG_admin_nic//:/-}
-	if [[ "${CONFIG_admin_ip}" == "dhcp" ]];
+	if [[ "${CONFIG_admin_ip}" == "dhcp" ]]; then
 		ip=$(ipadm show-addr -p -o TYPE,ADDR | grep dhcp | sed 's:dhcp\:\(.*\)/.*:\1:g')
 	else
 		ip=${CONFIG_admin_ip}
