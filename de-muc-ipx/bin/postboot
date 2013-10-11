@@ -30,8 +30,9 @@ fi
 
 ## Sendmail configuration for SmartHost setup
 if [[ ${CONFIG_mail_smarthost} ]]; then
-	cp /etc/mail/submit.cf /tmp/
+	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
 	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf > /etc/mail/submit.cf
+	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
 	svcadm refresh sendmail-client
 	svcadm refresh sendmail
 fi
@@ -46,7 +47,7 @@ R<?>\t\t$: <$(authinfo AuthInfo:$&{server_addr} $: ? $)>
 R<?>\t\t$: <$(authinfo AuthInfo: $: ? $)>
 R<?>\t\t$@ no               no authinfo available
 R<$*>\t\t$# $1' \
-	>> /etc/mail/submit.cf
+	| tee -a /etc/mail/sendmail.cf >> /etc/mail/submit.cf
 	makemap hash /etc/mail/default-auth-info < /etc/mail/default-auth-info
 	chgrp smmsp /etc/mail/default-auth-info.db
 fi
@@ -56,5 +57,10 @@ if [[ ${CONFIG_mail_adminaddr} ]]; then
 	echo "root: ${CONFIG_mail_adminaddr}" >> /etc/mail/aliases
 	newaliases
 fi
+
+## Setup crontabs only for root user
+for crontab in /opt/custom/crontabs/*; do
+	crontab ${crontab}
+done
 
 exit $SMF_EXIT_OK
