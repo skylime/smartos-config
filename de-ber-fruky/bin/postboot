@@ -13,13 +13,18 @@ PATH=/usr/bin:/usr/sbin:${PATH}
 ## Symlink some config files to the root user
 for fullpath in /opt/custom/profile/*; do
 	filename=${fullpath##*/}
-	ln -nsf "${file}" "/root/.${filename}"
+	ln -nsf "${fullpath}" "/root/.${filename}"
 done
 
 ## Setup fully qualified domain name
 if [[ ${CONFIG_dns_domain} ]]; then
-	hostname=$(hostname)
-	echo "${CONFIG_admin_ip}\t${hostname} ${hostname}.${CONFIG_dns_domain}" \
+	hostname=${CONFIG_admin_nic//:/-}
+	if [[ "${CONFIG_admin_ip}" == "dhcp" ]];
+		ip=$(ipadm show-addr -p -o TYPE,ADDR | grep dhcp | sed 's:dhcp\:\(.*\)/.*:\1:g')
+	else
+		ip=${CONFIG_admin_ip}
+	fi
+	echo -e "${ip}\t${hostname} ${hostname}.${CONFIG_dns_domain}" \
 		>> /etc/hosts
 fi
 
@@ -30,10 +35,7 @@ if [[ ${CONFIG_mail_smarthost} ]]; then
 	svcadm refresh sendmail
 fi
 if [[ ${CONFIG_mail_auth_user} ]]; then
-	echo 'AuthInfo:'${CONFIG_mail_smarthost}'
-		"U:'${CONFIG_mail_auth_user}'"
-		"I:'${CONFIG_mail_auth_user}'"
-		"P:'${CONFIG_mail_auth_pass}'"' \
+	echo 'AuthInfo:'${CONFIG_mail_smarthost}' "U:'${CONFIG_mail_auth_user}'" "I:'${CONFIG_mail_auth_user}'" "P:'${CONFIG_mail_auth_pass}'"' \
 		> /etc/mail/default-auth-info
 fi
 
