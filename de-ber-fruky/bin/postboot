@@ -59,6 +59,10 @@ if [[ ${CONFIG_mail_adminaddr} ]]; then
 fi
 
 ## Setup crontabs for all users
-cp /opt/custom/crontabs/* /etc/cron.d/crontabs/
+for crontab in /opt/custom/crontabs/*; do
+	user=${crontab##*/}
+	crontab -r ${user}
+	su - ${user} -c "crontab ${crontab}"
+done
 
 exit $SMF_EXIT_OK
