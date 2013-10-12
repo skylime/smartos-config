@@ -1,10 +1,4 @@
-"--------------------------------------------------------------------
-" $Id: vimrc,v 2.1 2008/06/20 10:20:00 drscream Exp $
-" Copyright 2007 Frubar Network (drscream@frubar.net)
-"--------------------------------------------------------------------
-
 " DEFAULT SET
-set runtimepath=$DOC_HOME/.vim,$VIMRUNTIME,$VIM/vimfiles,$VIM/vimfiles/after
 set title						" Show filename
 set showmode					" Show current mode
 set showcmd						" Show command mode
@@ -73,7 +67,6 @@ map <F5> :set number!<CR><Bar>:echo "Display Number: " . strpart("OffOn", 3 * &n
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 nnoremap <C-N> :next<Enter>
 nnoremap <C-P> :prev<Enter>
-nmap <S-N> :NERDTreeToggle<CR>
 " HexMode
 nnoremap <C-H> :Hexmode<CR>
 inoremap <C-H> <Esc>:Hexmode<CR>
@@ -87,19 +80,3 @@ endif
 
 " Make sure we have a sane fallback for encoding detection
 set fileencodings+=default
-
-" Powerline cache file
-let g:Powerline_cache_file = '/tmp/vim-powerline-tm.cache'
-
-" SOURCE IMPORT
-" Source vimrc.fix file, fix vim bugs
-let VIM_FIX=expand("$DOC_HOME/.vim/vimrc.fix")
-if filereadable(VIM_FIX)
-	exe "source " VIM_FIX
-endif
-
-" SPECIAL FILETYPES
-augroup filetype
-	au! BufRead,BufNewFile *.acl        set filetype=ciscoacl
-	au! BufRead,BufNewFile *.cisco      set filetype=cisco
-augroup END
