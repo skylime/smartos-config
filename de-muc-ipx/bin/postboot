@@ -18,8 +18,9 @@ done
 
 ## Setup fully qualified domain name
 if [[ ${CONFIG_dns_domain} ]]; then
+	hostname=${CONFIG_admin_nic//:/-}
 	cp /etc/inet/hosts /tmp
-	sed "s_${CONFIG_admin_nic//:/-}\$_${CONFIG_admin_nic//:/-} ${CONFIG_admin_nic//:/-}.${CONFIG_dns_domain}_g" /tmp/hosts \
+	sed "s_${hostname}\$_${hostname} ${hostname}.${CONFIG_dns_domain}_g" /tmp/hosts \
 		> /etc/inet/hosts
 fi
 
