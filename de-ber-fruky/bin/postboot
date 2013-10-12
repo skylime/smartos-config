@@ -18,14 +18,9 @@ done
 
 ## Setup fully qualified domain name
 if [[ ${CONFIG_dns_domain} ]]; then
-	hostname=${CONFIG_admin_nic//:/-}
-	if [[ "${CONFIG_admin_ip}" == "dhcp" ]]; then
-		ip=$(ipadm show-addr -p -o TYPE,ADDR | grep dhcp | sed 's:dhcp\:\(.*\)/.*:\1:g')
-	else
-		ip=${CONFIG_admin_ip}
-	fi
-	echo -e "${ip}\t${hostname} ${hostname}.${CONFIG_dns_domain}" \
-		>> /etc/hosts
+	cp /etc/inet/hosts /tmp
+	sed "s_${CONFIG_admin_nic//:/-}\$_${CONFIG_admin_nic//:/-} ${CONFIG_admin_nic//:/-}.${CONFIG_dns_domain}_g" /tmp/hosts \
+		> /etc/inet/hosts
 fi
 
 ## Sendmail configuration for SmartHost setup
@@ -60,5 +55,8 @@ fi
 
 ## Setup crontabs only for root user
 cat /opt/custom/crontabs/* | crontab
+
+## Delete all temp files created
+rm /tmp/{hosts,submit.cf,sendmail.cf}
 
 exit $SMF_EXIT_OK
