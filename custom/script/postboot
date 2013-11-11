@@ -60,7 +60,7 @@ cat /opt/custom/crontab/* | crontab
 ## Special configuration by hostname
 if [[ -d "/opt/custom/script/${hostname}" ]]; then
 	for script in "/opt/custom/script/${hostname}/"*.sh; do
-		./${script}
+		./${script} ${hostname}
 	done
 fi
 
