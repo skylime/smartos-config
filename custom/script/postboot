@@ -17,8 +17,8 @@ for fullpath in /opt/custom/profile/*; do
 done
 
 ## Setup fully qualified domain name
+hostname=${CONFIG_admin_nic//:/-}
 if [[ ${CONFIG_dns_domain} ]]; then
-	hostname=${CONFIG_admin_nic//:/-}
 	cp /etc/inet/hosts /tmp
 	sed "s_${hostname}\$_${hostname} ${hostname}.${CONFIG_dns_domain}_g" /tmp/hosts \
 		> /etc/inet/hosts
@@ -55,7 +55,14 @@ if [[ ${CONFIG_mail_adminaddr} ]]; then
 fi
 
 ## Setup crontabs only for root user
-cat /opt/custom/crontabs/* | crontab
+cat /opt/custom/crontab/* | crontab
+
+## Special configuration by hostname
+if [[ -d "/opt/custom/script/${hostname}" ]]; then
+	for script in "/opt/custom/script/${hostname}/"*.sh; do
+		./${script}
+	done
+fi
 
 ## Delete all temp files created
 rm /tmp/{hosts,submit.cf,sendmail.cf}

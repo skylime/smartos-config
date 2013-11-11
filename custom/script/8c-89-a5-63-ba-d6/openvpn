@@ -5,7 +5,7 @@
 getproparg() { 
         val=`svcprop -p $1 $SMF_FMRI` 
         [ -n "$val" ] && echo $val 
-} 
+}
 
 if [ -z "$SMF_FMRI" ]; then 
         echo "SMF framework variables are not initialized." 
@@ -36,5 +36,5 @@ case "$1" in
                 exit 1 
         ;;
 esac
- 
+
 exit $SMF_EXIT_OK
