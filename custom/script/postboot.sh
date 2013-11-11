@@ -10,20 +10,34 @@ load_sdc_config
 ## Set the PATH environment because of other commands in /usr
 PATH=/usr/bin:/usr/sbin:${PATH}
 
-## Symlink some config files to the root user
-for fullpath in /opt/custom/profile/*; do
-	filename=${fullpath##*/}
-	ln -nsf "${fullpath}" "/root/.${filename}"
-done
+## Local variables
+cfg='/opt/custom/cfg'
 
-## Setup crontabs only for root user
-cat /opt/custom/crontab/* | crontab
+## Functions
+function deploy() {
+	folder="${cfg}/${1}"
 
-## Special configuration by hostname
-if [[ -d "/opt/custom/script/${hostname}" ]]; then
-	for script in "/opt/custom/script/${hostname}/"*.sh; do
-		./${script} ${hostname}
-	done
-fi
+	if [[ -d "${folder}" ]]; then
+		# Copy all files from the root-folder
+		[[ -d "${folder}/root" ]] && cp -a "${folder}/root/"* /
+		# Run all scripts from the script-folder
+		if [[ -d "${folder}/script" ]]; then
+			for script in "${folder}/script/"*; do
+				[[ -x "${script}" ]] && ./${script}
+			done
+		fi
+		# Deploy cronjobs
+		[[ -d "${folder}/cronjob" ]] && cat "${folder}/cronjob/"* | crontab
+	fi
+}
+
+## Deploy global configuration
+deploy "global"
+
+## Deploy datacenter configuration
+deploy "${SYSINFO_Datacenter_Name}"
+
+## Deploy host configuration
+deploy "${SYSINFO_Hostname}"
 
 exit $SMF_EXIT_OK
