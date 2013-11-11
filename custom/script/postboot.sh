@@ -20,12 +20,14 @@ function deploy() {
 	if [[ -d "${folder}" ]]; then
 		# Copy all files from the root-folder
 		[[ -d "${folder}/root" ]] && cp -a "${folder}/root/"* /
+
 		# Run all scripts from the script-folder
 		if [[ -d "${folder}/script" ]]; then
 			for script in "${folder}/script/"*; do
 				[[ -x "${script}" ]] && ./${script}
 			done
 		fi
+
 		# Deploy cronjobs
 		[[ -d "${folder}/cronjob" ]] && cat "${folder}/cronjob/"* | crontab
 	fi
