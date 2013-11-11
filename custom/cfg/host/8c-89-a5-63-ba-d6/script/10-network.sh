@@ -1,7 +1,5 @@
 #!/bin/ksh
 
-hostname=${1}
-
 ## Disable DAD for Solaris
 ## http://wiki.hetzner.de/index.php/Solaris_DAD 
 # IPv4
@@ -29,15 +27,8 @@ ifconfig vnic0 inet6 addif 2a01:4f8:150:3ffb::1/64 up
 routeadm -u -e ipv4-forwarding
 # enable ipv6 forwarding
 routeadm -u -e ipv6-forwarding
-# setup nat rules
-cp /opt/custom/conf/${hostname}/ipf.conf /etc/ipf/ipf.conf
-cp /opt/custom/conf/${hostname}/ipnat.conf /etc/ipf/ipnat.conf
 # enable ipfilter
 svcadm enable network/ipfilter
 # reload
-#ipf -Fa -f /etc/ipf/ipf.conf
-#ipnat -C -f /etc/ipf/ipnat.conf
-
-## Copy svc methods
-# openvpn start script
-cp /opt/custom/script/${hostname}/openvpn /lib/svc/method/openvpn
+ipf -Fa -f /etc/ipf/ipf.conf
+ipnat -C -f /etc/ipf/ipnat.conf
