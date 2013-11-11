@@ -25,7 +25,7 @@
         <exec_method
                 type='method'
                 name='start'
-                exec='/opt/custom/bin/postboot'
+                exec='/opt/custom/script/postboot.sh'
                 timeout_seconds='0'>
         </exec_method>
         <exec_method
@@ -38,5 +38,10 @@
                 <propval name='duration' type='astring' value='transient' />
         </property_group>
         <stability value='Unstable' />
+        <template>
+            <common_name>
+                <loctext xml:lang="C">Postboot script for global SmartOS zone</loctext>
+            </common_name>
+        </template>
 </service>
 </service_bundle>
