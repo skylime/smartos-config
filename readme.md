@@ -1,12 +1,22 @@
-# My SmartOS configuration (global zone)
+# SmartOS configuration (global zone)
 
-Location codes could be found on
-http://www.unece.org/cefact/codesfortrade/codes_index.html
+In this repository you will find some `postboot` scripts for our SmartOS
+installations. This will allow you to run bash-scripts, deploy cfg files
+based on the datacenter (location) or hostname.
 
-## Design
+## Datacenter codes
+
+We use the following datacenter code for our hosts:
+
+	<country>-<location code>-<provider>
+	
+The location code could be found on the website from UNECE:
+
+	http://www.unece.org/cefact/codesfortrade/codes_index.html
+
+## Folder structure
 
 ```
-/opt
   /custom
     /smf
       postboot.xml
