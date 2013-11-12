@@ -7,26 +7,26 @@ http://www.unece.org/cefact/codesfortrade/codes_index.html
 
 ```
 /opt
-	/custom
-		/smf
-			postboot.xml
-		/script
-			postboot.sh
-		/cfg
-			/global
-				/script
-					00-postboot.sh
-					10-ipv6.sh
-				/root
-					/etc
-						hostname.txt
-			/datacenter
-				/de-fns-hetzner
-					/script
-					/root
-						...
-			/host
-				/fe-cd-f0...
+  /custom
+    /smf
+      postboot.xml
+    /script
+      postboot.sh
+    /cfg
+      /global
+        /script
+          00-postboot.sh
+          10-ipv6.sh
+        /root
+          /etc
+            hostname.txt
+      /datacenter
+        /de-fns-hetzner
+          /script
+          /root
+            ...
+      /host
+        /fe-cd-f0...
 ```
 
 ## Setup
