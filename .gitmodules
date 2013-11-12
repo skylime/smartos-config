@@ -1,0 +1,3 @@
+[submodule "custom/cfg/host"]
+	path = custom/cfg/host
+	url = git@git.int.skylime.net:SkyLime/smartos-config-host.git
