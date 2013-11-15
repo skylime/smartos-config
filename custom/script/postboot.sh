@@ -29,7 +29,7 @@ function deploy() {
 		fi
 
 		# Deploy cronjobs
-		[[ -d "${folder}/cronjob" ]] && cat "${folder}/cronjob/"* | crontab
+		[[ -d "${folder}/crontab" ]] && cat "${folder}/crontab/"* | crontab
 	fi
 }
 
