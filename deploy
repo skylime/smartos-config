@@ -2,7 +2,7 @@
 
 host=${1}
 
-if [ $# -eq 2 ]; then
+if [ $# -eq 1 ]; then
 	ssh -4 root@${host} "rm -rf /opt/custom/"
 	scp -4 -r custom root@${host}:/opt/custom/
 else
