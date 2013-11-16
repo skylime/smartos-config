@@ -37,9 +37,9 @@ function deploy() {
 deploy "global"
 
 ## Deploy datacenter configuration
-deploy "${SYSINFO_Datacenter_Name}"
+deploy "datacenter/${SYSINFO_Datacenter_Name}"
 
 ## Deploy host configuration
-deploy "${SYSINFO_Hostname}"
+deploy "host/${SYSINFO_Hostname}"
 
 exit $SMF_EXIT_OK
