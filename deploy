@@ -3,8 +3,8 @@
 host=${1}
 
 if [ $# -eq 1 ]; then
-	ssh -4 root@${host} "rm -rf /opt/custom/"
-	scp -4 -r custom root@${host}:/opt/custom/
+	ssh root@${host} "rm -rf /opt/{custom,local}/"
+	scp -r {custom,local} root@red.srv.skylime.net:/opt/
 else
 	echo "${0} [host]"
 fi
