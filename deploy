@@ -4,7 +4,7 @@ host=${1}
 
 if [ $# -eq 1 ]; then
 	ssh root@${host} "rm -rf /opt/{custom,local}/"
-	scp -r {custom,local} root@red.srv.skylime.net:/opt/
+	scp -r {custom,local} root@${host}:/opt/
 else
 	echo "${0} [host]"
 fi
