@@ -6,13 +6,27 @@
 load_sdc_sysinfo
 load_sdc_config
 
-ifconfig ${SYSINFO_NIC_admin} inet6 plumb up
+# Run through every NIC tag
+for tag in ${SYSINFO_Nic_Tags//,/ }; do
+	iface=SYSINFO_NIC_${tag}
 
-if [[ -n "${CONFIG_admin_v6_ip}" ]] && [[ -n "${CONFIG_admin_v6_gateway}" ]]; then
-	ifconfig ${SYSINFO_NIC_admin} inet6 addif ${CONFIG_admin_v6_ip} up
-	admin_v6_iponly=`echo ${CONFIG_admin_v6_ip} | sed 's:/.*::'`
-	route add -inet6 ${CONFIG_admin_v6_gateway} ${admin_v6_iponly} -interface
-	route add -inet6 default ${CONFIG_admin_v6_gateway}
-fi
+	# Run through existing tag instance ids
+	sdc_config_keys | sed -n "s:${tag}\([0-9]\{1,\}\)_v6_ip:\1:p" | while read instance; do
+		v6_ip=CONFIG_${tag}${instance}_v6_ip
+		v6_gw=CONFIG_${tag}${instance}_v6_gateway
+
+		# Be sure ip address and gateway exists
+		if [[ -n "${!v6_ip}" ]]; then
+			v6_iponly=$(echo ${!v6_ip} | sed 's:/.*::')
+			ifconfig ${!iface} inet6 plumb up
+			ifconfig ${!iface} inet6 addif ${!v6_ip} up
+
+			if [[ -n "${!v6_gw}" ]]; then
+				route add -inet6 ${!v6_gw} ${v6_iponly} -interface
+				route add -inet6 default ${!v6_gw}
+			fi
+		fi
+	done
+done
 
 exit $SMF_EXIT_OK
