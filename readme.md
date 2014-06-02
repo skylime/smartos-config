@@ -48,8 +48,8 @@ Simple `scp` the content of one folder to `/opt/custom/`. For example:
 
 ## New variables for `/usbkey/config`
 
-Fixed IPv6 support for global zone on boot:
-[NIC syntax explained here](http://wiki.smartos.org/display/DOC/extra+configuration+options#extraconfigurationoptions-AdditionalNICs)
+Fixed IPv6 support for global zone on boot:  
+[NIC syntax explained here](http://wiki.smartos.org/display/DOC/extra+configuration+options#extraconfigurationoptions-AdditionalNICs)  
 The instance# is mandatory for this script
 
 	admin0_v6_ip=
