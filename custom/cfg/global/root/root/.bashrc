@@ -32,6 +32,7 @@ if [ "$PS1" ]; then
 	fi
 	alias ls='ls --color'
 	alias ll='ls -lF'
+	alias ping6='ping -A inet6 -as'
 	[ -n "${SSH_CLIENT}" ] && export PROMPT_COMMAND='echo -ne "\033]0;${HOSTNAME} \007" && history -a'
 fi
 
