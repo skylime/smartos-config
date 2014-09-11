@@ -53,3 +53,12 @@ svclog() {
 svclogf() {
 	/usr/bin/tail -f `svcs -L $1`
 }
+
+# reprovision funct for reprovisioning of zones
+function reprovision() {
+    if [ $# -ne 2 ]; then
+        echo "usage: reprovision [vm-uuid] [img-uuid]"
+        return
+    fi
+    echo \{ \"image_uuid\": \"$2\" \} | vmadm reprovision $1
+}
