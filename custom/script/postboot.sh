@@ -18,6 +18,9 @@ function deploy() {
 	folder="${cfg}/${1}"
 
 	if [[ -d "${folder}" ]]; then
+		# Set 755 permissions for /root folder (must have 755 for ssh)
+	        [[ -d "${folder}/root/root/" ]] && chmod 755 "${folder}/root/root/"
+
 		# Copy all files from the root-folder
 		[[ -d "${folder}/root" ]] && cp -a "${folder}/root/"* /
 
