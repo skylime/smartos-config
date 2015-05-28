@@ -12,14 +12,16 @@ PATH=/usr/bin:/usr/sbin:${PATH}
 
 ## Sendmail configuration for SmartHost setup
 if [[ ${CONFIG_mail_smarthost} ]]; then
-	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /etc/mail/submit.cf
-	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /etc/mail/sendmail.cf
+	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
+	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf   > /etc/mail/submit.cf
+	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
 fi
 
 ## Possibility to modify the sender domian name, default FQDN
 if [[ ${CONFIG_mail_sender_domain} ]]; then
-	sed -i "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /etc/mail/submit.cf
-	sed -i "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /etc/mail/sendmail.cf
+	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
+	sed -i "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /tmp/submit.cf   > /etc/mail/submit.cf
+	sed -i "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
 fi
 
 if [[ ${CONFIG_mail_auth_user} ]]; then
@@ -43,6 +45,9 @@ if [[ ${CONFIG_mail_adminaddr} ]]; then
 	echo "root: ${CONFIG_mail_adminaddr}" >> /etc/mail/aliases
 	newaliases
 fi
+
+## Delete all temp files created
+rm /tmp/{submit.cf,sendmail.cf}
 
 ## Refresh the configuration
 if [[ ${CONFIG_mail_smarthost} || ${CONFIG_mail_sender_domain} ]]; then
