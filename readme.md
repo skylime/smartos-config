@@ -52,13 +52,15 @@ Fixed IPv6 support for global zone on boot:
 
 	admin0_v6_ip=
 	admin0_v6_gateway=
-	
-[NIC syntax is explained here](http://wiki.smartos.org/display/DOC/extra+configuration+options#extraconfigurationoptions-AdditionalNICs)  
-NOTE: The instance# is necessary for this script to work properly
+
+[NIC syntax is explained here](http://wiki.smartos.org/display/DOC/extra+configuration+options#extraconfigurationoptions-AdditionalNICs)
+
+	NOTE: The instance# is necessary for this script to work properly
 
 Mail configuration for SmartHost:
 
 	mail_smarthost=
+	mail_sender_domain=
 	mail_auth_user=
 	mail_auth_pass=
 	mail_adminaddr=
