@@ -13,15 +13,15 @@ PATH=/usr/bin:/usr/sbin:${PATH}
 ## Sendmail configuration for SmartHost setup
 if [[ ${CONFIG_mail_smarthost} ]]; then
 	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
-	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf   > /etc/mail/submit.cf
-	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
+	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf   > /etc/mail/submit.cf
+	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
 fi
 
 ## Possibility to modify the sender domian name, default FQDN
 if [[ ${CONFIG_mail_sender_domain} ]]; then
 	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
-	sed -i "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /tmp/submit.cf   > /etc/mail/submit.cf
-	sed -i "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
+	sed "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /tmp/submit.cf   > /etc/mail/submit.cf
+	sed "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
 fi
 
 if [[ ${CONFIG_mail_auth_user} ]]; then
