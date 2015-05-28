@@ -12,9 +12,8 @@ PATH=/usr/bin:/usr/sbin:${PATH}
 
 ## Sendmail configuration for SmartHost setup
 if [[ ${CONFIG_mail_smarthost} ]]; then
-	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
-	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf > /etc/mail/submit.cf
-	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
+	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /etc/mail/submit.cf
+	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /etc/mail/sendmail.cf
 	svcadm refresh sendmail-client
 	svcadm refresh sendmail
 fi
@@ -39,8 +38,5 @@ if [[ ${CONFIG_mail_adminaddr} ]]; then
 	echo "root: ${CONFIG_mail_adminaddr}" >> /etc/mail/aliases
 	newaliases
 fi
-
-## Delete all temp files created
-rm /tmp/{hosts,submit.cf,sendmail.cf}
 
 exit $SMF_EXIT_OK
