@@ -56,16 +56,15 @@ svclogf() {
 
 # reprovision funct for reprovisioning of zones
 function reprovision() {
-if [ $# -ne 2 ]; then
-echo "Usage: reprovision [vm-uuid] [img-uuid]"
-return
-fi
-# import image if not yet imported
-imgadm import $2
-if [ $? -ne 0 ]; then
-return
-fi
-# starting reprovisioning
-echo \{ \"image_uuid\": \"$2\" \} | vmadm reprovision $1
+	if [ $# -ne 2 ]; then
+		echo "Usage: reprovision [vm-uuid] [img-uuid]"
+		return
+	fi
+	# import image if not yet imported
+	imgadm import $2
+	if [ $? -ne 0 ]; then
+		return
+	fi
+	# starting reprovisioning
+	echo \{ \"image_uuid\": \"$2\" \} | vmadm reprovision $1
 }
-
