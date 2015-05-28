@@ -14,9 +14,14 @@ PATH=/usr/bin:/usr/sbin:${PATH}
 if [[ ${CONFIG_mail_smarthost} ]]; then
 	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /etc/mail/submit.cf
 	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /etc/mail/sendmail.cf
-	svcadm refresh sendmail-client
-	svcadm refresh sendmail
 fi
+
+## Possibility to modify the sender domian name, default FQDN
+if [[ ${CONFIG_mail_sender_domain} ]]; then
+	sed -i "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /etc/mail/submit.cf
+	sed -i "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /etc/mail/sendmail.cf
+fi
+
 if [[ ${CONFIG_mail_auth_user} ]]; then
 	echo 'AuthInfo:'${CONFIG_mail_smarthost}' "U:'${CONFIG_mail_auth_user}'" "I:'${CONFIG_mail_auth_user}'" "P:'${CONFIG_mail_auth_pass}'"' \
 		> /etc/mail/default-auth-info
@@ -37,6 +42,12 @@ fi
 if [[ ${CONFIG_mail_adminaddr} ]]; then
 	echo "root: ${CONFIG_mail_adminaddr}" >> /etc/mail/aliases
 	newaliases
+fi
+
+## Refresh the configuration
+if [[ ${CONFIG_mail_smarthost} || ${CONFIG_mail_sender_domain} ]]; then
+	svcadm refresh sendmail-client
+	svcadm refresh sendmail
 fi
 
 exit $SMF_EXIT_OK
