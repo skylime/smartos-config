@@ -23,7 +23,7 @@ if [[ ${CONFIG_mail_smarthost} ]]; then
 	fi
 fi
 
-## Possibility to modify the sender domian name, default FQDN
+## Possibility to modify the sender domain name, default FQDN
 if [[ ${CONFIG_mail_sender_domain} ]]; then
 	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
 	sed "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /tmp/submit.cf   > /etc/mail/submit.cf

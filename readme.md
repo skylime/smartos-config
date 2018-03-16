@@ -58,6 +58,7 @@ Fixed IPv6 support for global zone on boot ([NIC syntax](http://wiki.smartos.org
 Mail configuration for SmartHost, everything is optional:
 
 	mail_smarthost=
+	mail_smarthost_port=
 	mail_sender_domain=
 	mail_auth_user=
 	mail_auth_pass=
