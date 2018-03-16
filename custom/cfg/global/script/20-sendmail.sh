@@ -15,6 +15,12 @@ if [[ ${CONFIG_mail_smarthost} ]]; then
 	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
 	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf   > /etc/mail/submit.cf
 	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
+	## Sendmail relay port (ex 587)
+	if [[ ${CONFIG_mail_smarthost_port} ]]; then
+		cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
+		sed "/^Mrelay/,+2 s:\(A=TCP \$h\)$:\1 ${CONFIG_mail_smarthost_port}:" /tmp/submit.cf   > /etc/mail/submit.cf
+		sed "/^Mrelay/,+2 s:\(A=TCP \$h\)$:\1 ${CONFIG_mail_smarthost_port}:" /tmp/sendmail.cf > /etc/mail/sendmail.cf
+	fi
 fi
 
 ## Possibility to modify the sender domian name, default FQDN
