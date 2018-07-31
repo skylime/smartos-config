@@ -10,24 +10,27 @@ load_sdc_config
 ## Set the PATH environment because of other commands in /usr
 PATH=/usr/bin:/usr/sbin:${PATH}
 
+## Initialize sendmail configuration change counter
+SM_CHANGED=0
+
 ## Sendmail configuration for SmartHost setup
 if [[ ${CONFIG_mail_smarthost} ]]; then
-	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
-	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/submit.cf   > /etc/mail/submit.cf
-	sed "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
+	cp /etc/mail/{submit,sendmail}.cf /tmp/
+	sed -i "s:^DS$:DS[${CONFIG_mail_smarthost}]:g" /tmp/{submit,sendmail}.cf
+	let SM_CHANGED++
 	## Sendmail relay port (ex 587)
 	if [[ ${CONFIG_mail_smarthost_port} ]]; then
-		cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
-		sed "/^Mrelay/,+2 s:\(A=TCP \$h\)$:\1 ${CONFIG_mail_smarthost_port}:" /tmp/submit.cf   > /etc/mail/submit.cf
-		sed "/^Mrelay/,+2 s:\(A=TCP \$h\)$:\1 ${CONFIG_mail_smarthost_port}:" /tmp/sendmail.cf > /etc/mail/sendmail.cf
+		sed -i "/^Mrelay/,+2 s:\(A=TCP \$h\)$:\1 ${CONFIG_mail_smarthost_port}:" /tmp/{submit,sendmail}.cf
 	fi
 fi
 
 ## Possibility to modify the sender domain name, default FQDN
 if [[ ${CONFIG_mail_sender_domain} ]]; then
-	cp /etc/mail/{submit.cf,sendmail.cf} /tmp/
-	sed "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /tmp/submit.cf   > /etc/mail/submit.cf
-	sed "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /tmp/sendmail.cf > /etc/mail/sendmail.cf
+	if [[ $SM_CHANGED -eq 0 ]]; then
+		cp /etc/mail/{submit,sendmail}.cf /tmp/
+	fi
+	sed -i "s:#Dj.*:Dj${CONFIG_mail_sender_domain}:g" /tmp/{submit,sendmail}.cf
+	let SM_CHANGED++
 fi
 
 if [[ ${CONFIG_mail_auth_user} ]]; then
@@ -52,13 +55,15 @@ if [[ ${CONFIG_mail_adminaddr} ]]; then
 	newaliases
 fi
 
-## Delete all temp files created
-rm /tmp/{submit.cf,sendmail.cf}
+if [[ $SM_CHANGED -gt 0 ]]; then
+	## Merge and clean up temporary files
+	for f in {submit,sendmail}.cf; do
+		cat /tmp/${f} > /etc/mail/${f}
+		rm /tmp/${f}
+	done
 
-## Refresh the configuration
-if [[ ${CONFIG_mail_smarthost} || ${CONFIG_mail_sender_domain} ]]; then
-	svcadm refresh sendmail-client
-	svcadm refresh sendmail
+	## Refresh the configuration
+	svcadm refresh sendmail{,-client}
 fi
 
 exit $SMF_EXIT_OK
